@@ -6,6 +6,9 @@ from flask.ext.security import Security, SQLAlchemyUserDatastore, \
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@localhost/flask-movie'
+app.config['SECRET_KEY'] = 'super-secret'
+app.config['SECURITY_REGISTERABLE'] = True
+
 app.debug = True
 db = SQLAlchemy(app)
 
@@ -46,14 +49,13 @@ def create_user():
 
 @app.route('/')
 def index():
-    myUser = User.query.all()
-    oneItem = User.query.filter_by(username="test3").first()
-    return render_template('add_user.html', myUser=myUser, oneItem=oneItem)
+    return render_template('index.html')
 
 
-@app.route('/profile/<username>')
-def profile(username):
-    user = User.query.filter_by(username=username).first()
+@app.route('/profile/<email>')
+@login_required
+def profile(email):
+    user = User.query.filter_by(email=email).first()
     return render_template('profile.html', user=user)
 
 
